@@ -20,7 +20,7 @@ const checkOverload = () => {
          //Example maximum number of connections based on number of cores
          const maxConnections = numCores * 5;
          if(numConnection > maxConnections){
-            console.log('Connection overload detected!')
+            console.log('Connection overload detected')
             //notify.send()
          }
 
