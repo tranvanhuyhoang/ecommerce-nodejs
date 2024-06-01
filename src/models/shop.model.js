@@ -1,43 +1,48 @@
-'use strict'
+"use strict"
 // !dmbg
 
-const {model, Schema, Types} = require('mongoose'); // Erase if already required
-const DOCUMENT_NAME = 'Shop'
-const COLLECTION_NAME = 'Shops'
+const mongoose = require("mongoose")
+const { model, Schema, Types } = require("mongoose") // Erase if already required
+
+const DOCUMENT_NAME = "Shop"
+const COLLECTION_NAME = "Shops"
 
 // Declare the Schema of the Mongo model
-const shopSchema = new mongoose.Schema({
-    name:{
-        type:String,
-        trim: true,
-        maxLength: 150
+const shopSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      trim: true,
+      maxLength: 150,
     },
-    email:{
-        type:String,
-        trim:true,
-        unique:true,
+    email: {
+      type: String,
+      trim: true,
+      unique: true,
     },
-    status:{
-        type: String,
-        enum: ['active', 'inactive'],
-        default: 'inactive'
+    status: {
+      type: String,
+      enum: ["active", "inactive"],
+      default: "inactive",
     },
-    password:{
-        type:String,
-        required:true,
+    password: {
+      type: String,
+      required: true,
     },
-    verify:{
-        type:Schema.Types.Boolean,
-        default:false
+    verify: {
+      type: Schema.Types.Boolean,
+      default: false,
     },
-    roles:{
-        type: Array,
-        default: []
-    }
-}, {
+    roles: {
+      type: Array,
+      default: [],
+    },
+  },
+  {
     timestamps: true,
-    collection: COLLECTION_NAME
-});
+    collection: COLLECTION_NAME,
+  }
+)
 
 //Export the model
-module.exports = mongoose.model(DOCUMENT_NAME, shopSchema);
+module.exports = mongoose.model(DOCUMENT_NAME, shopSchema)
