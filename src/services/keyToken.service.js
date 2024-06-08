@@ -1,4 +1,5 @@
 "use strict"
+const keyTokenModel = require("../models/keyToken.model")
 
 class KeyTokenService {
   static createKeyToken = async ({ user, publicKey }) => {
@@ -9,7 +10,7 @@ class KeyTokenService {
         publicKey: publicKeyString,
       })
 
-      return tokens ? publicKeyString : null
+      return tokens ? tokens.publicKey : null
     } catch (error) {
       return {
         code: "500",

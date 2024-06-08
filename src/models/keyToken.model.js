@@ -1,6 +1,7 @@
 "use strict"
 
 const { Schema, model } = require("mongoose") // Erase if already required
+const mongoose = require("mongoose")
 
 const DOCUMENT_NAME = "Key"
 const COLLECTION_NAME = "Keys"

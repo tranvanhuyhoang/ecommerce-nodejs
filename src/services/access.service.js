@@ -1,10 +1,12 @@
 "use strict"
 
 const shopModel = require("../models/shop.model")
-const keyTokenModel = require("../models/keyToken.model")
 const bcrypt = require("bcrypt")
 const crypto = require("crypto")
 const KeyTokenService = require("./keyToken.service")
+const { createTokenPair } = require("../auth/authUtils")
+const { format } = require("path")
+const { getInfoData } = require("../utils")
 
 const RoleShop = {
   ADMIN: "admin",
@@ -15,7 +17,7 @@ const RoleShop = {
 class AccessService {
   static signUp = async ({ name, email, password }) => {
     try {
-      const holderShop = await shopModel.findOne({ email }).clean()
+      const holderShop = await shopModel.findOne({ email }).lean()
       if (holderShop) {
         return {
           code: "400",
@@ -23,7 +25,7 @@ class AccessService {
         }
       }
 
-      const passwordHash = bcrypt.hash(password, 10)
+      const passwordHash = await bcrypt.hash(password, 10)
       const newShop = await shopModel.create({
         name,
         email,
@@ -35,15 +37,51 @@ class AccessService {
         // created privateKey and publicKey
         const { privateKey, publicKey } = crypto.generateKeyPairSync("rsa", {
           modulusLength: 4096,
+          publicKeyEncoding: {
+            type: "pkcs1",
+            format: "pem",
+          },
+          privateKeyEncoding: {
+            type: "pkcs1",
+            format: "pem",
+          },
         })
-
-        console.log("privateKey", privateKey)
-        console.log("publicKey", publicKey)
 
         const publicKeyString = await KeyTokenService.createKeyToken({
           user: newShop._id,
           publicKey,
         })
+
+        if (!publicKeyString) {
+          return {
+            code: "xxxx",
+            message: "Error publicKeyString",
+          }
+        }
+
+        const publicKeyObject = crypto.createPublicKey(publicKeyString)
+
+        const token = await createTokenPair(
+          { user: newShop._id, email },
+          publicKeyString,
+          privateKey
+        )
+        return {
+          code: "201",
+          metadata: {
+            shop: getInfoData({
+              fields: ["_id", "name", "email"],
+              object: newShop,
+            }),
+            token,
+          },
+          message: "Success",
+        }
+      }
+
+      return {
+        code: "200",
+        medatada: null,
       }
     } catch (error) {
       return {

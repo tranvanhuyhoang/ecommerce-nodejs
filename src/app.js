@@ -14,6 +14,8 @@ app.use(morgan("dev"))
 // helmet
 app.use(helmet())
 app.use(compression())
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 
 //init DB
 require("./dbs/init.mongodb")
